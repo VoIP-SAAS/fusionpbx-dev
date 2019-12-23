@@ -97,8 +97,7 @@
 	$sql .= "(select count(*) from v_multinode where domain_uuid = '".$_SESSION['domain_uuid']."' ".$sql_mod.") as num_rows ";
 	if ($db_type == "pgsql") {
 		$sql .= ",(select count(*) as count from v_multinode ";
-		$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
-		$sql .= "as numeric_multinode ";
+		$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."') as numeric_multinode ";
 
 	}
 
