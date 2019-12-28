@@ -51,7 +51,7 @@
 		$action = "add";
 	}
 	$domain_uuid = check_str($_SESSION['domain_uuid']);
-
+//echo $domain_uuid;exit;
 //get the http values and set them as php variables
 	if (count($_POST) > 0) {
 		 //echo $action;exit;
@@ -121,7 +121,6 @@
 //echo $action;exit;
 //process the user data and save it to the database
 	if (count($_POST) > 0 && strlen($_POST["persistformvar"]) == 0) {
-
 		//set the domain_uuid
 			if (permission_exists('extension_domain')) {
 				$domain_uuid = $_POST["domain_uuid"];
@@ -343,7 +342,7 @@
 		$multinode_uuid = $_GET["id"];
 		$sql = "select * from v_multinode ";
 		$sql .= "where multinode_uuid = '".check_str($multinode_uuid)."' ";
-		$sql .= "and domain_uuid = '".check_str($domain_uuid)."' ";
+//		$sql .= "and domain_uuid = '".check_str($domain_uuid)."' ";
 		$prep_statement = $db->prepare(check_sql($sql));
 		$prep_statement->execute();
 		$result = $prep_statement->fetchAll(PDO::FETCH_NAMED);
