@@ -103,8 +103,8 @@
 
 
 				$sql = "select switch_name,node_priority from v_multinode ";
-		                $sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
-                		$sql .= "and multinode_uuid = '".$multinode_uuid."' ";
+		                //$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
+                		$sql .= "where multinode_uuid = '".$multinode_uuid."' ";
 
                 		$result = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                 		foreach ($result as &$row) {
@@ -113,8 +113,8 @@
                 		}
 
 					$sql = "delete from v_multinode ";
-					$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
-					$sql .= "and multinode_uuid = '".$multinode_uuid."' ";
+					//$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
+					$sql .= "where multinode_uuid = '".$multinode_uuid."' ";
 					$prep_statement = $db->prepare(check_sql($sql));
 					$prep_statement->execute();
 					unset($prep_statement, $sql);
