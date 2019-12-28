@@ -209,9 +209,8 @@
 					$sql .= "enable_fallback_format_fields  =   '".check_str($enable_fallback_format_fields)."', ";
 					$sql .= "format_fields  =   '".check_str($format_fields)."', ";
 					$sql .= "event_filter   =   '".check_str($event_filter)."' ";
-
-					$sql .= "where multinode_uuid = '".check_str($multinode_uuid)."' and ";
-					$sql .= "domain_uuid = '".check_str($domain_uuid)."'";
+					$sql .= "where multinode_uuid = '".check_str($multinode_uuid)."'";
+					//$sql .= "domain_uuid = '".check_str($domain_uuid)."'";
 
 					// echo $sql;
 

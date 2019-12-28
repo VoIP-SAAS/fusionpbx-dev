@@ -94,10 +94,9 @@
 
 //get total extension count from the database
 	$sql = "select ";
-	$sql .= "(select count(*) from v_multinode where domain_uuid = '".$_SESSION['domain_uuid']."' ".$sql_mod.") as num_rows ";
+	$sql .= "(select count(*) from v_multinode where ".$sql_mod.") as num_rows ";
 	if ($db_type == "pgsql") {
-		$sql .= ",(select count(*) as count from v_multinode ";
-		$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."') as numeric_multinode ";
+		$sql .= ",(select count(*) as count from v_multinode ) as numeric_multinode ";
 
 	}
 
@@ -132,7 +131,7 @@
 
 //get the extensions
 	$sql = "select * from v_multinode ";
-	$sql .= "where domain_uuid = '$domain_uuid' ";
+//	$sql .= "where domain_uuid = '$domain_uuid' ";
 	$sql .= $sql_mod; //add search mod from above
 	if (strlen($order_by) > 0) {
 		$sql .= ($order_by == 'name') ? "order by $order_text ".$order." " : "order by ".$order_by." ".$order." ";
