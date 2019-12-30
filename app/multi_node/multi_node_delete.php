@@ -57,10 +57,12 @@
 			if ($multinode_uuid != '') {
 				
 				//log the transaction results
+
 				//delete the extension
 				$sql = "select switch_name,node_priority from v_multinode ";
-		                //$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
-                		$sql .= "where multinode_uuid = '".$multinode_uuid."' ";
+        $sql .= "where multinode_uuid = '".$multinode_uuid."' ";
+
+
                 		$result = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                 		foreach ($result as &$row) {
 		                        $switch_name = $row['switch_name'];
@@ -97,7 +99,6 @@
 	
 			}
 		}
-
 
 		//synchronize configuration
 			// if (is_readable($_SESSION['switch']['extensions']['dir'])) {

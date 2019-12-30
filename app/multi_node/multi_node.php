@@ -99,7 +99,7 @@
 		$sql .= ",(select count(*) as count from v_multinode ) as numeric_multinode ";
 
 	}
-	
+
 	$prep_statement = $db->prepare($sql);
 	if ($prep_statement) {
 		$prep_statement->execute();
