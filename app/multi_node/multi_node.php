@@ -94,12 +94,12 @@
 
 //get total extension count from the database
 	$sql = "select ";
-	$sql .= "(select count(*) from v_multinode where ".$sql_mod.") as num_rows ";
+	$sql .= "(select count(*) from v_multinode ) as num_rows ";
 	if ($db_type == "pgsql") {
 		$sql .= ",(select count(*) as count from v_multinode ) as numeric_multinode ";
 
 	}
-
+	
 	$prep_statement = $db->prepare($sql);
 	if ($prep_statement) {
 		$prep_statement->execute();
