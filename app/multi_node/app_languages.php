@@ -1341,19 +1341,11 @@ $text['label-is_registered']['ar-eg'] = "";
 $text['label-is_registered']['he'] = "";
 $text['label-is_registered']['it-it'] = "Registrato";
 
-
 $text['header-multinode']['en-us'] = "Multi Node";
 $text['header-multinode']['es-cl'] = "Multi Node";
 $text['header-multinode']['pt-pt'] = "Multi Node";
 $text['header-multinode']['fr-fr'] = "Multi Node";
 $text['header-multinode']['pt-br'] = "Multi Node";
-
-$text['header-multinode']['en-us'] = "Multi node";
-$text['header-multinode']['es-cl'] = "Multi node";
-$text['header-multinode']['pt-pt'] = "Multi node";
-$text['header-multinode']['fr-fr'] = "Multi node";
-$text['header-multinode']['pt-br'] = "Multi node";
-
 $text['header-multinode']['pl'] = "Numery wewnętrzne";
 $text['header-multinode']['uk'] = "Розширення";
 $text['header-multinode']['sv-se'] = "Anknytningar";

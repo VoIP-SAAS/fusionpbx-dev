@@ -44,29 +44,40 @@
 //set the action as an add or an update
 	if (isset($_REQUEST["id"])) {
 		$action = "update";
+			/**
+			if (isset($_POST["id"])) {
+                        $multinode_uuid = check_str($_GET["id"]);
+	                }
+	                if (isset($_POST["multinode_uuid"])) {
+                        $multinode_uuid = check_str($_GET["multinode_uuid"]);
+                	}**/
+			//$extension_uuid = $_REQUEST["id"];
+			//$multinode_uuid	= check_str($_GET["id"]);
+	}
 	else {
 		$action = "add";
 	}
 	$domain_uuid = check_str($_SESSION['domain_uuid']);
+//get the http values and set them as php variables
 	if (count($_POST) > 0) {
 		//get the values from the HTTP POST and save them as PHP variables
 		$name  						=	$_POST['name'];
 		$hostname  					=	$_POST['hostname'];
-		$virtualhost  				=	$_POST['virtualhost'];
+		$virtualhost  					=	$_POST['virtualhost'];
 		$username  					=	$_POST['username'];
 		$password  					=	$_POST['password'];
 		$port  						=	$_POST['port'];
-		$node_priority  			=	$_POST['node_priority'];
-		$exchange_name  			=	$_POST['exchange_name'];
-		$exchange_type  			=	$_POST['exchange_type'];
-		$circuit_breaker_ms  		=	$_POST['circuit_breaker_ms'];
-		$reconnect_interval_ms  	=	$_POST['reconnect_interval_ms'];
-		$send_queue_size  			=	$_POST['send_queue_size'];
+		$node_priority  				=	$_POST['node_priority'];
+		$exchange_name  				=	$_POST['exchange_name'];
+		$exchange_type  				=	$_POST['exchange_type'];
+		$circuit_breaker_ms  				=	$_POST['circuit_breaker_ms'];
+		$reconnect_interval_ms  			=	$_POST['reconnect_interval_ms'];
+		$send_queue_size  				=	$_POST['send_queue_size'];
 		$enable_fallback_format_fields  		=	$_POST['enable_fallback_format_fields'];
-		$format_fields  			=	$_POST['format_fields'];
-		$event_filter  				=	$_POST['event_filter'];
-		$switch_name				=	$_POST['switch_name'];
-}	
+		$format_fields  				=	$_POST['format_fields'];
+		$event_filter  					=	$_POST['event_filter'];
+		$switch_name					=	$_POST['switch_name'];
+		}	
 				if (count($_POST) > 0 && strlen($_POST["persistformvar"]) == 0) {
 				//check for all required data
 				$msg = '';
@@ -91,7 +102,7 @@
 			}
 
 				if ($action == "add") {
-			$sql = "INSERT INTO v_multinode 
+				$sql = "INSERT INTO v_multinode 
 					(multinode_uuid, domain_uuid, name, node_priority, switch_name, hostname, virtualhost, username, password, 
 					port, exchange_name, exchange_type, circuit_breaker_ms, reconnect_interval_ms, 
 					send_queue_size, enable_fallback_format_fields, format_fields, event_filter)";
@@ -101,19 +112,12 @@
 			'".$circuit_breaker_ms."', '".$reconnect_interval_ms."', '".$send_queue_size."', '".$enable_fallback_format_fields."',
 			 '".$format_fields."', '".$event_filter."'
 			) ";
+			
 				$prep_statement = $db->prepare($sql);
 				if ($prep_statement) {
 				$prep_statement->execute();									
 				}
 				unset($prep_statement, $sql);
-			// die();
-			$prep_statement = $db->prepare($sql);
-			if ($prep_statement) {
-				$prep_statement->execute();									
-			}
-			unset($prep_statement, $sql);
-
-					//$event_socket_ip_address = '127.0.0.1';
                                         $cmd = "api switchname";
                                         $response = trim(event_socket_request_cmd($cmd));
                                         unset($cmd);
@@ -128,15 +132,11 @@
                                                 echo "sorry";
                                                 //save_amqp_xml();
                                         }
-
-			header('Location: multi_node.php');
-			// die("ok");
+					header('Location: multi_node.php');
 		}
 	
-	}
+}
 
-
-//echo $action;exit;
 //process the user data and save it to the database
 	if (count($_POST) > 0 && strlen($_POST["persistformvar"]) == 0) {
 		//set the domain_uuid
@@ -189,16 +189,8 @@
 					$multinode_uuid = $_REQUEST['multinode_uuid'];
 					if(!$multinode_uuid) {$multinode_uuid = check_str($_GET["id"]);}
 					$sql = "update v_multinode set ";
-
-				
-
-			
-			//assign the device to the extension 
-				if ($action == "update") {
-
-					$domain_uuid = $_SESSION['domain_uuid'];
-					$multinode_uuid = $_REQUEST['multinode_uuid'];	
-					$sql = "update v_multinode set ";
+					// $sql .= "multinode_uuid   =   '".check_str($multinode_uuid)."', ";
+					// $sql .= "domain_uuid    =   '".check_str($domain_uuid)."', ";
 					$sql .= "name   =   '".check_str($name)."', ";
 					$sql .= "node_priority  =   '".check_str($node_priority)."', ";
 					$sql .= "switch_name    =   '".check_str($switch_name)."', ";
@@ -216,9 +208,9 @@
 					$sql .= "format_fields  =   '".check_str($format_fields)."', ";
 					$sql .= "event_filter   =   '".check_str($event_filter)."' ";
 					$sql .= "where multinode_uuid = '".check_str($multinode_uuid)."'";
+					//$sql .= "domain_uuid = '".check_str($domain_uuid)."'";
 					$db->exec(check_sql($sql));
 					unset($sql);
-					$db->exec(check_sql($sql));
 				        $cmd = "api switchname";
 				        $response = trim(event_socket_request_cmd($cmd));
 				        unset($cmd);
@@ -236,18 +228,6 @@
 					header("Location: multi_node.php");
 				}
 
-			//check the permissions
-				if (permission_exists('multi_node_add') || permission_exists('multi_node_edit')) {
-
-					//write the provision files
-						if (strlen($_SESSION['provision']['path']['text']) > 0) {
-							if (is_dir($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH.'/app/provision')) {
-								$prov = new provision;
-								$prov->domain_uuid = $domain_uuid;
-								$response = $prov->write();
-							}
-						}
-				}
 
 			//show the action and redirect the user
 				if ($action == "add") {
@@ -276,6 +256,9 @@
                                         }
                                         else
                                         {
+                                                echo "sorry";
+                                                //save_amqp_xml();
+                                        }
 					//save_amqp_xml();
 					header("Location: multi_node_edit.php?id=".$multinode_uuid);
 					return;
@@ -439,6 +422,7 @@
 	echo $text['description-form-node-priority']."\n";
 	echo "</td>\n";
 	echo "</tr>\n";
+
 //set the defaults
 if (strlen($exchange_name) == 0) { $exchange_name = 'TAP.Events'; }
 if (strlen($exchange_type) == 0) { $exchange_type = 'topic'; }
@@ -453,7 +437,6 @@ if (strlen($format_fields) == 0) { $format_fields = '#FreeSWITCH,FreeSWITCH-Host
 if (strlen($event_filter) == 0) { $event_filter = 'CUSTOM,CONFERENCE_DATA'; }
 
 if (strlen($switch_name) == 0) { $cmd = "api switchname"; $switch_name = trim(event_socket_request_cmd($cmd)); unset($cmd); }
-
 	
 	//--- begin: show_advanced -----------------------
 
@@ -580,6 +563,7 @@ if (strlen($switch_name) == 0) { $cmd = "api switchname"; $switch_name = trim(ev
 	echo "</tr>\n";
 
 	//--- end: show_advanced -----------------------
+
 	echo "	<tr>\n";
 	echo "		<td colspan='2' align='right'>\n";
 	if ($action == "update") {

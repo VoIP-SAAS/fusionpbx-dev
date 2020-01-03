@@ -43,19 +43,6 @@
 
 </style>
 <?php
-//get the registrations
-/**	if (permission_exists('extension_registered')) {
-		//create the event socket connection
-		$fp = event_socket_create($_SESSION['event_socket_ip_address'], $_SESSION['event_socket_port'], $_SESSION['event_socket_password']);
-		if (!$fp) {
-			$msg = "<div align='center'>".$text['error-event-socket']."<br /></div>";
-		}
-		$registrations = get_registrations('internal');
-		//order the array
-		require_once "resources/classes/array_order.php";
-		$order = new array_order();
-		$registrations = $order->sort($registrations, 'sip-auth-realm', 'user');
-	}**/
 
 //add multi-lingual support
 	$language = new text;
@@ -94,12 +81,11 @@
 
 //get total extension count from the database
 	$sql = "select ";
-	$sql .= "(select count(*) from v_multinode ) as num_rows ";
+	$sql .= "(select count(*) from v_multinode ) as num_rows";
 	if ($db_type == "pgsql") {
-		$sql .= ",(select count(*) as count from v_multinode ) as numeric_multinode ";
-
+		$sql .= ",(select count(*) as count from v_multinode ) as numeric_multinode";
 	}
-
+	
 	$prep_statement = $db->prepare($sql);
 	if ($prep_statement) {
 		$prep_statement->execute();
@@ -111,7 +97,6 @@
 	}
 
 	unset($prep_statement, $row);
-
 //prepare to page the results
 	$rows_per_page = ($_SESSION['domain']['paging']['numeric'] != '') ? $_SESSION['domain']['paging']['numeric'] : 50;
 	$param = "&search=".$search;
@@ -120,7 +105,6 @@
 	list($paging_controls_mini, $rows_per_page, $var_3) = paging($total_multinodes, $param, $rows_per_page, true); //top
 	list($paging_controls, $rows_per_page, $var_3) = paging($total_multinodes, $param, $rows_per_page); //bottom
 	$offset = $rows_per_page * $_GET['page'];
-
 //to cast or not to cast
 	if ($db_type == "pgsql") {
 		$order_text = "hostname asc";
@@ -129,7 +113,7 @@
 		$order_text = "hostname asc";
 	}
 
-//get the extensions
+//get the v_multinode
 	$sql = "select * from v_multinode ";
 //	$sql .= "where domain_uuid = '$domain_uuid' ";
 	$sql .= $sql_mod; //add search mod from above
@@ -140,15 +124,11 @@
 		$sql .= "order by $order_text ";
 	}
 	$sql .= "limit $rows_per_page offset $offset ";
-
-	//echo $sql;exit;
-
 	$prep_statement = $db->prepare(check_sql($sql));
 	$prep_statement->execute();
 	$multi_nodes = $prep_statement->fetchAll(PDO::FETCH_NAMED);
 	unset ($prep_statement, $sql);
 
-	// die(print_r($multi_nodes));
 //set the alternating styles
 	$c = 0;
 	$row_style["0"] = "row_style0";
@@ -160,14 +140,11 @@
 	echo "	<td align='left' width='100%'>\n";
 	echo "		<b>".$text['header-multinode']." (".$total_multinodes.")</b><br>\n";
 	echo "	</td>\n";
-
 	?>
 		
 	<?php
-
 	echo "		<form method='get' action=''>\n";
 	echo "			<td style='vertical-align: top; text-align: right; white-space: nowrap;'>\n";
-	
 	echo "				<input type='text' class='txt' style='width: 150px' name='search' id='search' value='".$search."'>";
 	echo "				<input type='submit' class='btn' name='submit' value='".$text['button-search']."'>";
 	if ($paging_controls_mini != '') {
@@ -211,7 +188,6 @@
 	echo "</tr>\n";
 
 	if (is_array($multi_nodes)) {
-
 		foreach($multi_nodes as $row) {
 			$tr_link = (permission_exists('multi_node_edit')) ? " href='multi_node_edit.php?id=".$row['multinode_uuid']."'" : null;
 			echo "<tr ".$tr_link.">\n";
@@ -234,26 +210,6 @@
 			echo "	<td valign='top' class='".$row_style[$c]."'>".$row['virtualhost']."</td>\n";
 			echo "	<td valign='top' class='".$row_style[$c]."'>".$row['username']."</td>\n";
 			echo "	<td valign='top' class='".$row_style[$c]."'>".$row['port']."</td>\n";
-
-			/**if (permission_exists('extension_registered')) {
- 				echo "	<td valign='top' class='".$row_style[$c]."'>";
- 				$found = false;
- 				$found_count = 0;
- 				foreach ($registrations as $arr) {
- 					if (in_array($row['extension'],$arr)) {
- 						$found = true;
- 						$found_count++;
- 					}
- 				}
- 				if ($found) {
- 					echo "Yes ($found_count)";
- 				} else {
- 					echo "No";
- 				}
- 				echo "&nbsp;</td>\n";
- 			}**/
-
-			// echo "	<td valign='top' class='".$row_style[$c]."'>".ucwords($row['enabled'])."</td>\n";
 
 			echo "	<td class='list_control_icons'>";
 			if (permission_exists('multi_node_edit')) {
