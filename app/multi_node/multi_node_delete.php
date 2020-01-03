@@ -57,55 +57,10 @@
 			if ($multinode_uuid != '') {
 				
 				//log the transaction results
-					// if (file_exists($_SERVER["PROJECT_ROOT"]."/app/database_transactions/app_config.php")) {
-					// 	//set the variables
-					// 		$app_name = "extensions";
-					// 		$app_uuid = "e68d9689-2769-e013-28fa-6214bf47fca3";
-					// 		$code = "200";
-					// 		$new_array = array();
-
-					// 	//add the insert into database transactions
-					// 		$sql = "insert into v_database_transactions ";
-					// 		$sql .= "(";
-					// 		$sql .= "database_transaction_uuid, ";
-					// 		$sql .= "domain_uuid, ";
-					// 		$sql .= "user_uuid, ";
-					// 		$sql .= "app_uuid, ";
-					// 		$sql .= "app_name, ";
-					// 		$sql .= "transaction_code, ";
-					// 		$sql .= "transaction_address, ";
-					// 		//$sql .= "transaction_type, ";
-					// 		$sql .= "transaction_date, ";
-					// 		$sql .= "transaction_old, ";
-					// 		//$sql .= "transaction_new, ";
-					// 		$sql .= "transaction_result ";
-					// 		$sql .= ")";
-					// 		$sql .= "values ";
-					// 		$sql .= "(";
-					// 		$sql .= "'".uuid()."', ";
-					// 		$sql .= "'".$_SESSION['domain_uuid']."', ";
-					// 		$sql .= "'".$_SESSION['user_uuid']."', ";
-					// 		$sql .= "'".$app_uuid."', ";
-					// 		$sql .= "'".$app_name."', ";
-					// 		$sql .= "'".$code."', ";
-					// 		$sql .= "'".$_SERVER['REMOTE_ADDR']."', ";
-					// 		//$sql .= "'$transaction_type', ";
-					// 		$sql .= "now(), ";
-					// 		$sql .= "'".json_encode($old_array, JSON_PRETTY_PRINT)."', ";
-					// 		//$sql .= "'".json_encode($new_array, JSON_PRETTY_PRINT)."', ";
-					// 		$sql .= "null ";
-					// 		$sql .= ")";
-					// 		$db->exec(check_sql($sql));
-					// 		unset($sql);
-					// }
-
 				//delete the extension
-
-
 				$sql = "select switch_name,node_priority from v_multinode ";
 		                //$sql .= "where domain_uuid = '".$_SESSION['domain_uuid']."' ";
-                		$sql .= "where multinode_uuid = '".$multinode_uuid."' ";
-
+                		$sql .= "where multinode_uuid = '".$multinode_uuid."'";
                 		$result = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                 		foreach ($result as &$row) {
 		                        $switch_name = $row['switch_name'];
@@ -118,8 +73,6 @@
 					$prep_statement = $db->prepare(check_sql($sql));
 					$prep_statement->execute();
 					unset($prep_statement, $sql);
-
-					//$event_socket_ip_address = '127.0.0.1';
                                         $cmd = "api switchname";
                                         $response = trim(event_socket_request_cmd($cmd));
                                         unset($cmd);
@@ -141,17 +94,10 @@
                                                 echo "sorry";
                                                 //save_amqp_xml();
                                         }
-
-
-
-
 	
 			}
 		}
 
-		//clear the cache
-			// $cache = new cache;
-			// $cache->delete("directory:".$extension."@".$user_context);
 
 		//synchronize configuration
 			// if (is_readable($_SESSION['switch']['extensions']['dir'])) {
