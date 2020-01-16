@@ -160,6 +160,7 @@
 			require "resources.functions.settings";
 		--fetch values [ domain_language - domain_dialect - domain_voice ] from domain_setting for vooicemial
 			settings2 = settings2(domain_uuid);
+			settings = settings(domain_uuid);
 			if (settings2['domain'] ~= nil) then
                                 if (settings2['domain']['domain_language'] ~= nil) then
                                         if (settings2['domain']['domain_language']['code'] ~= nil) then
@@ -178,6 +179,26 @@
                                 end
 
                         end
+
+			if (settings2['domain'] == nil) then
+                                if (settings['domain']['domain_language'] ~= nil) then
+                                        if (settings['domain']['domain_language']['code'] ~= nil) then
+                                                default_language = settings['domain']['domain_language']['code'];
+                                        end
+                                end
+                                if (settings['domain']['domain_dialect'] ~= nil) then
+                                        if (settings['domain']['domain_dialect']['code'] ~= nil) then
+                                                default_dialect = settings['domain']['domain_dialect']['code'];
+                                        end
+                                end
+                                if (settings['domain']['domain_voice'] ~= nil) then
+                                        if (settings['domain']['domain_voice']['code'] ~= nil) then
+                                                default_voice = settings['domain']['domain_voice']['code'];
+                                        end
+                                end
+
+                        end
+
 			if (not default_language) then default_language = session:getVariable("default_language"); end
                         if (not default_dialect) then default_dialect = session:getVariable("default_dialect"); end
                         if (not default_voice) then default_voice = session:getVariable("default_voice"); end
@@ -186,7 +207,7 @@
                         if (not default_dialect) then default_dialect = 'us'; end
                         if (not default_voice) then default_voice = 'callie'; end
 
-			settings = settings(domain_uuid);
+			--settings = settings(domain_uuid);
 			if (settings['voicemail'] ~= nil) then
 				storage_type = '';
 				if (settings['voicemail']['storage_type'] ~= nil) then
