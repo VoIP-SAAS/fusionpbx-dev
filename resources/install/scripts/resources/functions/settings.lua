@@ -150,6 +150,58 @@
 			return array;
 	end
 
+--define select_entry domain function
+        function settings2(domain_uuid)
+                --define the table
+                        local array = {}
+                --get the default settings
+                        local sql = "SELECT * FROM v_domain_settings ";
+                        sql = sql .. "WHERE domain_uuid = :domain_uuid ";
+                        sql = sql .. "AND domain_setting_enabled = 'true' ";
+                        sql = sql .. "AND domain_setting_category is not null ";
+                        sql = sql .. "AND domain_setting_subcategory is not null ";
+                        sql = sql .. "AND domain_setting_name is not null ";
+                        sql = sql .. "AND domain_setting_value is not null ";
+                        sql = sql .. "ORDER BY domain_setting_category, domain_setting_subcategory ASC";
+                        local params = {domain_uuid = domain_uuid};
+                        if (debug["sql"]) then
+                                freeswitch.consoleLog("notice", "[settings] SQL: " .. sql .. "\n");
+                        end
+
+                        dbh:query(sql, params, function(row)
+                                --variables
+                                        local setting_uuid = row.domain_setting_uuid
+                                        local category = row.domain_setting_category;
+                                        local subcategory = row.domain_setting_subcategory;
+                                        local name = row.domain_setting_name;
+                                        local value = row.domain_setting_value;
+
+                                --add the category array
+                                        if (array[category] == nil) then
+                                                array[category] = {}
+                                        end
+
+                                --add the subcategory array
+                                        if (array[category][subcategory] == nil) then
+                                                array[category][subcategory] = {}
+                                        end
+								--set the name and value
+                                        if (name == "array") then
+                                                local t = array[category][subcategory]
+                                                t[#t + 1] = value
+                                        else
+                                                if (value ~= nil) then
+                                                        array[category][subcategory][name] = value;
+                                                end
+                                        end
+                        end);
+
+                --return the array
+                        return array;
+
+        end
+
+
 --example use
 	--array = settings(domain_uuid);
 	--result = array['domain']['template']['name'];
