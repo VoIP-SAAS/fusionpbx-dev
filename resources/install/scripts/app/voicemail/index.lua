@@ -207,6 +207,10 @@
                         if (not default_dialect) then default_dialect = 'us'; end
                         if (not default_voice) then default_voice = 'callie'; end
 
+			session:execute("export", "default_language="..default_language);
+			session:execute("export", "default_dialect="..default_dialect);
+			session:execute("export", "default_voice="..default_voice);
+
 			--settings = settings(domain_uuid);
 			if (settings['voicemail'] ~= nil) then
 				storage_type = '';
