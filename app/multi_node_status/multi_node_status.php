@@ -120,25 +120,83 @@ else {
 					if ($field["virtualhost"] == "/"){  $multi_virtualhost="%2f"; }
                                         $multi_username = $field["username"];
                                         $multi_password = $field["password"];
-                                        $multi_exchange_name = $field["exchange_name"];
+					$multi_exchange_name = $field["exchange_name"];
                         $ch = curl_init();
-                     	//curl_setopt($ch, CURLOPT_URL,"http://localhost:15672/api/exchanges/%2f/main.topic");
-			curl_setopt($ch, CURLOPT_URL,"http://".$multi_hostname.":15672/api/exchanges/".$multi_virtualhost."/".$multi_exchange_name);
+					//curl_setopt($ch, CURLOPT_URL,"http://".$multi_hostname.":15672/api/exchanges/".$multi_virtualhost."/".$multi_exchange_name);
+					curl_setopt($ch, CURLOPT_URL,"http://".$multi_hostname.":15672/api/vhosts/".$multi_virtualhost."/connections");
                         curl_setopt($ch, CURLOPT_USERAGENT, "MozillaXYZ/1.0");
                         curl_setopt($ch, CURLOPT_HEADER, 0);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($ch, CURLOPT_USERPWD, 'guest:guest');
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+//			curl_setopt($ch, CURLOPT_USERPWD, 'guest:guest');
+                        curl_setopt($ch, CURLOPT_USERPWD, $multi_username . ":" . $multi_password);
                         $headers = array();
                         $headers[] = 'Content-Type: application/json';
                         $output = curl_exec($ch);
                         curl_close($ch);
-                        $curlJSON = json_decode($output);
-			//print_r($curlJSON);exit;
-                        if (!$curlJSON->error){  $state="Connected";}
+			$curlJSON = json_decode($output,true);
+//			print_r($curlJSON);exit;
+//			print_r(sizeof($curlJSON));exit;
+//			print_r($curlJSON[0]["client_properties"]['x_(null)_Liquid_ProcessBuil']);exit;
+//			print_r(sizeof($curlJSON[0]["client_properties"]));exit;
+			if (!$curlJSON->error){  $state="Connected";}
 			if ($curlJSON->error){  $state="Not Connected";}
+			if(sizeof($curlJSON) == 0)
+			{
+				$state="Not Connected";
+			}
+			foreach ($curlJSON as $key => $value) {
+
+				if($value["auth_mechanism"] == "PLAIN")
+				{
+
+					if($value["client_properties"]["capabilities"]["exchange_exchange_bindings"])
+					{
+
+						$state="Connected";
+					}
+					else
+					{
+						$state="Not Connected";
+					}
+					//echo $value["client_properties"]["x_(null)_Liquid_ProcessBuil"] . "<br>";
+				}
+
+				if($value["auth_mechanism"] == "AMQPLAIN")
+				{
+					if($value["client_properties"]["capabilities"]["consumer_cancel_notify"] or $value["client_properties"]["capabilities"]["connection.blocked"])
+					{
+						$state="Not Connected";
+					}
+				}
+
+			}
+
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL,"http://".$multi_hostname.":15672/api/exchanges/".$multi_virtualhost."/".$multi_exchange_name);
+			curl_setopt($ch, CURLOPT_USERAGENT, "MozillaXYZ/1.0");
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_USERPWD, $multi_username . ":" . $multi_password);
+			$headers = array();
+			$headers[] = 'Content-Type: application/json';
+			$output = curl_exec($ch);
+			curl_close($ch);
+			$curlJSON = json_decode($output,true);
+//			print_r($curlJSON);exit;
+			if($curlJSON["error"])
+			{
+				//echo "error found";
+				$state="Not Connected";
+			}
+			if ($curlJSON->error){  $state="Not Connected";}
+//			echo $state;
+//			exit;
                         echo "<tr>\n";
                         echo "  <td class='".$row_style[$c]."'>".$field["name"]."</td>\n";
                         echo "  <td class='".$row_style[$c]."'>".$field["exchange_name"]."</td>\n";
