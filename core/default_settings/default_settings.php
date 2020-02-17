@@ -153,6 +153,7 @@
 		echo "	function hide_domains() {\n";
 		echo "		document.getElementById('action').value = '';\n";
 		echo "		document.getElementById('button_back').style.display = 'none'; \n";
+		echo "		document.getElementById('target_domain_uuid').style.display = 'none'; \n";
 		echo "		document.getElementById('target_domain_uuid').selectedIndex = 0;\n";
 		echo "		document.getElementById('button_paste').style.display = 'none'; \n";
 		echo "		document.getElementById('button_copy').style.display = 'inline'; \n";
@@ -172,7 +173,7 @@
 		if (permission_exists("domain_select") && permission_exists("domain_setting_add") && count($_SESSION['domains']) > 1) {
 			echo button::create(['type'=>'button','label'=>$text['button-copy'],'id'=>'button_copy','icon'=>$_SESSION['theme']['button_icon_copy'],'onclick'=>'show_domains();']);
 			echo button::create(['type'=>'button','label'=>$text['button-back'],'id'=>'button_back','icon'=>$_SESSION['theme']['button_icon_refresh'],'style'=>'display: none;','onclick'=>'hide_domains();']);
-			echo 		"<select name='domain_uuid'; class='formfld' style='display: none; width: auto;' id='target_domain_uuid' onchange=\"document.getElementById('domain_uuid').value = this.options[this.selectedIndex].value;\">\n";
+			echo 		"<select name='domain_uuid' class='formfld' style='display: none; width: auto;' id='target_domain_uuid' onchange=\"document.getElementById('domain_uuid').value = this.options[this.selectedIndex].value;\">\n";
 			echo "			<option value=''>".$text['label-domain']."...</option>\n";
 			foreach ($_SESSION['domains'] as $domain) {
 				echo "		<option value='".escape($domain["domain_uuid"])."'>".escape($domain["domain_name"])."</option>\n";
@@ -277,7 +278,14 @@
 			if ($_GET['show'] == 'all' && permission_exists('default_setting_all')) {
 				echo "	<td>".escape($_SESSION['domains'][$row['domain_uuid']]['domain_name'])."</td>\n";
 			}
-			echo "	<td class='overflow no-wrap'>".escape($row['default_setting_subcategory'])."</td>\n";
+			echo "	<td class='overflow no-wrap'>";
+			if (permission_exists('default_setting_edit')) {
+				echo "<a href='".$list_row_url."'>".escape($row['default_setting_subcategory'])."</a>";
+			}
+			else {
+				echo escape($row['default_setting_subcategory']);
+			}
+			echo "	</td>\n";
 			echo "	<td class='hide-sm-dn'>".escape($row['default_setting_name'])."</td>\n";
 			echo "	<td class='overflow no-wrap'>\n";
 			$category = $row['default_setting_category'];
